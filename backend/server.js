@@ -13,6 +13,9 @@ app.use(express.json());
 // Serve static files from the uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Serve the frontend UI
+app.use(express.static(path.join(__dirname, '../frontend')));
+
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: { origin: "*" }

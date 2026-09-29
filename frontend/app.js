@@ -45,7 +45,7 @@ const ENCRYPTION_KEY = urlParams.get('key') || 'SuperSecretKey';
 
 // Connect to Backend WebSocket safely
 let socket = null;
-const BACKEND_URL = window.location.protocol + '//' + window.location.hostname + ':5000';
+const BACKEND_URL = window.location.origin;
 
 try {
     if (typeof io !== 'undefined') {
