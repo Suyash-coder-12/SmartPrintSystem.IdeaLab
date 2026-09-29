@@ -291,9 +291,9 @@ printBtn.addEventListener('click', async () => {
     } catch (error) {
         clearInterval(interval);
         console.error('Error sending print job', error);
-        statusText.textContent = 'Failed to process order.';
+        statusText.textContent = `Failed to process order: ${error.message}`;
         statusText.style.color = 'var(--error)'; 
-        showToast('Failed to connect to print server.', 'error');
+        showToast(`Failed: ${error.message}`, 'error');
         
         setTimeout(() => {
             progressOverlay.classList.add('hidden');
