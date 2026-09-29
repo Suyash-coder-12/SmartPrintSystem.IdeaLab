@@ -54,6 +54,23 @@ app.post('/api/upload', upload.single('document'), (req, res) => {
     res.json({ url: fileUrl, filename: req.file.originalname });
 });
 
+// API to trigger print via HTTP POST
+app.post('/api/print', (req, res) => {
+    const { shopId, url, filename, printSettings } = req.body;
+    const targetShop = shopId || 'default-shop';
+    
+    console.log(`Received HTTP print job from frontend for shop: ${targetShop}`);
+    
+    // Forward the print job to the specific shop's PC via WebSocket
+    io.to(targetShop).emit('print-job', {
+        url,
+        filename,
+        printSettings
+    });
+    
+    res.json({ success: true, message: 'Print job dispatched' });
+});
+
 // -- WEBSOCKETS (SOCKET.IO) --
 
 io.on('connection', (socket) => {

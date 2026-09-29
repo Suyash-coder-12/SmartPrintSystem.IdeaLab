@@ -265,10 +265,16 @@ printBtn.addEventListener('click', async () => {
             printSettings: settings
         };
 
-        if (socket && socket.connected) {
-            socket.emit('trigger-print', printPayload);
-        } else {
-            throw new Error("Socket disconnected");
+        const printResponse = await fetch(`${BACKEND_URL}/api/print`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(printPayload)
+        });
+
+        if (!printResponse.ok) {
+            throw new Error(`Print trigger failed: ${printResponse.statusText}`);
         }
 
         setTimeout(() => {
