@@ -6,7 +6,7 @@ const crypto = require("crypto");
 
 // Load or Create Config
 const configPath = path.join(__dirname, 'config.json');
-let config = { SHOP_ID: "SHOP_1234", ENCRYPTION_KEY: "SuperSecretKey", SERVER_URL: "http://localhost:5000" };
+let config = { SHOP_ID: "SHOP_1234", ENCRYPTION_KEY: "SuperSecretKey", SERVER_URL: "https://qr-print-api.onrender.com" };
 
 if (fs.existsSync(configPath)) {
     config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
@@ -16,7 +16,7 @@ if (fs.existsSync(configPath)) {
 }
 
 // Connect to the WebSocket server
-const SERVER_URL = config.SERVER_URL || "http://localhost:5000";
+const SERVER_URL = config.SERVER_URL || "https://qr-print-api.onrender.com";
 console.log(`Connecting to server: ${SERVER_URL} as Shop: ${config.SHOP_ID}`);
 const socket = io(SERVER_URL);
 
