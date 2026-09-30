@@ -62,10 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             if (currentRole === 'xerox') {
-                window.location.href = 'dashboard.html';
+                window.location.href = 'shop_admin.html';
             } else {
-                alert('SuperAdmin Dashboard not yet scaffolded. Redirecting to Xerox Center Dashboard instead.');
-                window.location.href = 'dashboard.html';
+                window.location.href = 'super_admin.html';
             }
         }, 1200);
     });

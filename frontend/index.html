@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
     <!-- Load heavy scripts asynchronously to prevent slow loading -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js" defer></script>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" defer></script>
@@ -38,7 +38,7 @@
                     </svg>
                     <h1>Smart Print</h1>
                 </div>
-                <p>Enterprise-grade cloud printing for BeatsVibe customers.</p>
+                <p>Enterprise-grade cloud printing for customers.</p>
             </div>
             
             <div id="shopBadgeContainer" style="display: flex; align-items: center; gap: 15px;">
@@ -69,9 +69,9 @@
                 <p style="color: var(--text-muted);">Choose how you want to provide your document</p>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+            <div style="display: flex; justify-content: center; gap: 24px;">
                 <!-- Upload Option -->
-                <div class="upload-area" id="dropzone">
+                <div class="upload-area" id="dropzone" style="max-width: 500px; width: 100%;">
                     <input type="file" id="fileInput" accept="*/*" style="display: none;">
                     <div class="upload-icon-wrapper">
                         <!-- Premium Upload Icon -->
@@ -84,7 +84,6 @@
                     <h2>Upload Document</h2>
                     <p>Drag & Drop or <span class="browse-btn" id="browseBtn">Browse files</span></p>
                 </div>
-
             </div>
 
             <div class="features-list">
@@ -235,11 +234,11 @@
     <footer style="text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 14px;">
         <p>&copy; 2026 Smart Print by BeatsVibe. All rights reserved.</p>
         <div style="margin-top: 15px;">
-            <a href="login.php" style="color: var(--primary-color); font-weight: 600; text-decoration: none;">Admin Login Portal</a>
+            <a href="login.html" style="color: var(--primary); font-weight: 600; text-decoration: none;">Admin Login Portal</a>
         </div>
     </footer>
 
     <div id="toastContainer" class="toast-container"></div>
-    <script src="app.js" defer></script>
+    <script src="app.js?v=3" defer></script>
 </body>
 </html>

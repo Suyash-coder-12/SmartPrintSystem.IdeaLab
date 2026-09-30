@@ -13,19 +13,9 @@ app.use(express.json());
 // Serve static files from the uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Serve frontend static assets (CSS, JS, images)
-app.use(express.static(path.join(__dirname, '../frontend'), { index: false }));
-
-// Subdomain routing for HTML files
+// API root route for health check
 app.get('/', (req, res) => {
-    const host = req.headers.host || '';
-    if (host.startsWith('admin.')) {
-        res.sendFile(path.join(__dirname, '../frontend/shop_admin.html'));
-    } else if (host.startsWith('luckystrike.')) {
-        res.sendFile(path.join(__dirname, '../frontend/super_admin.html'));
-    } else {
-        res.sendFile(path.join(__dirname, '../frontend/index.html'));
-    }
+    res.json({ status: 'API is running', version: '1.0' });
 });
 
 const server = http.createServer(app);

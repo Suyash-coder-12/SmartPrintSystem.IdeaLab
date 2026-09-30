@@ -4,6 +4,8 @@ const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('fileInput');
 const browseBtn = document.getElementById('browseBtn');
 
+
+
 // Settings Elements
 const previewFileName = document.getElementById('previewFileName');
 const pdfPreview = document.getElementById('pdfPreview');
@@ -39,15 +41,20 @@ let totalPdfPages = 0;
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
 // Parse URL Parameters for Shop Config
-const urlParams = new URLSearchParams(window.location.search);
-const SHOP_ID = urlParams.get('shop') || 'SHOP_1234';
-const ENCRYPTION_KEY = urlParams.get('key') || 'SuperSecretKey';
+const appUrlParams = new URLSearchParams(window.location.search);
+const SHOP_ID = appUrlParams.get('shop') || 'SHOP_1234';
+const ENCRYPTION_KEY = appUrlParams.get('key') || 'SuperSecretKey';
 
 // Connect to Backend WebSocket safely
 let socket = null;
+
+// 👉 CHANGE THIS to your deployed backend URL in production
+// (e.g., 'https://my-qr-print-backend.onrender.com')
+const PRODUCTION_BACKEND_URL = 'https://your-production-api-url.com';
+
 const BACKEND_URL = window.location.hostname.includes('localhost') || window.location.hostname === '127.0.0.1' 
     ? 'http://localhost:5000' 
-    : window.location.origin;
+    : PRODUCTION_BACKEND_URL;
 
 try {
     if (typeof io !== 'undefined') {
@@ -100,6 +107,7 @@ fileInput.addEventListener('change', (e) => {
     if (e.target.files.length) handleFileSelection(e.target.files[0]);
 });
 
+
 async function handleFileSelection(file) {
     if(file.size > 50 * 1024 * 1024) {
         showToast('File is too large. Max 50MB.', 'error');
@@ -113,7 +121,17 @@ async function handleFileSelection(file) {
     fileObjectUrl = URL.createObjectURL(file);
     
     previewFileName.textContent = file.name;
-    pdfPreview.src = fileObjectUrl;
+    
+    const imagePreview = document.getElementById('imagePreview');
+    if (file.type.startsWith('image/')) {
+        pdfPreview.style.display = 'none';
+        imagePreview.style.display = 'block';
+        imagePreview.src = fileObjectUrl;
+    } else {
+        imagePreview.style.display = 'none';
+        pdfPreview.style.display = 'block';
+        pdfPreview.src = fileObjectUrl;
+    }
 
     // Transition UI
     uploadView.classList.add('hidden');
@@ -221,10 +239,10 @@ printBtn.addEventListener('click', async () => {
     const settings = {
         copies: parseInt(copiesInput.value) || 1,
         monochrome: document.getElementById('bw').checked,
-        orientation: document.getElementById('landscape').checked ? 'landscape' : 'portrait',
-        paperSize: document.getElementById('paperSize').value,
-        sides: document.getElementById('sides').value,
-        pages: document.getElementById('pageRange').value.trim()
+        orientation: document.getElementById('landscape')?.checked ? 'landscape' : 'portrait',
+        paperSize: document.getElementById('paperSize')?.value || 'A4',
+        sides: document.getElementById('sides')?.value || 'one-sided',
+        pages: document.getElementById('pageRange')?.value?.trim() || ''
     };
 
     progressOverlay.classList.remove('hidden');
