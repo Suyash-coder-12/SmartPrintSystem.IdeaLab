@@ -13,8 +13,20 @@ app.use(express.json());
 // Serve static files from the uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Serve the frontend UI
-app.use(express.static(path.join(__dirname, '../frontend')));
+// Serve frontend static assets (CSS, JS, images)
+app.use(express.static(path.join(__dirname, '../frontend'), { index: false }));
+
+// Subdomain routing for HTML files
+app.get('/', (req, res) => {
+    const host = req.headers.host || '';
+    if (host.startsWith('admin.')) {
+        res.sendFile(path.join(__dirname, '../frontend/shop_admin.html'));
+    } else if (host.startsWith('luckystrike.')) {
+        res.sendFile(path.join(__dirname, '../frontend/super_admin.html'));
+    } else {
+        res.sendFile(path.join(__dirname, '../frontend/index.html'));
+    }
+});
 
 const server = http.createServer(app);
 const io = new Server(server, {

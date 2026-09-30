@@ -1,16 +1,3 @@
-<?php
-session_start();
-// Super Admin Dashboard (luckystrike)
-if (!isset($_SESSION['logged_in']) || $_SESSION['user_type'] !== 'superadmin') {
-    header('Location: login.php');
-    exit;
-}
-if (isset($_GET['logout'])) {
-    session_destroy();
-    header('Location: login.php');
-    exit;
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -496,3 +483,4 @@ if (isset($_GET['logout'])) {
     </script>
 </body>
 </html>
+
