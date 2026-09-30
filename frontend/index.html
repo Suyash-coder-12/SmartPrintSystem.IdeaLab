@@ -85,18 +85,6 @@
                     <p>Drag & Drop or <span class="browse-btn" id="browseBtn">Browse files</span></p>
                 </div>
 
-                <!-- Scan Option -->
-                <div class="upload-area" id="scanBtnArea">
-                    <div class="upload-icon-wrapper" style="animation: none;">
-                        <!-- Premium Scan Icon -->
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 7V4a2 2 0 0 1 2-2h3"/><path d="M4 17v3a2 2 0 0 0 2 2h3"/><path d="M20 17v3a2 2 0 0 1-2 2h-3"/><path d="M20 7V4a2 2 0 0 0-2-2h-3"/>
-                            <circle cx="12" cy="12" r="3"/>
-                        </svg>
-                    </div>
-                    <h2>Scan Document</h2>
-                    <p>Use your camera to scan pages directly.</p>
-                </div>
             </div>
 
             <div class="features-list">
@@ -125,32 +113,6 @@
                         <p style="font-size: 14px; color: var(--text-muted);">Pay securely online or choose cash. Your document is instantly sent to the shop's printer queue for immediate processing.</p>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- Scanner Interface (Hidden initially) -->
-        <section class="glass-panel hidden" id="scannerView" style="max-width: 800px; margin: 0 auto; width: 100%; padding: 24px; text-align: center;">
-            <div class="pane-header" style="margin-bottom: 20px; border-radius: var(--radius-sm);">
-                <div class="header-title">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                    <h3>Document Scanner</h3>
-                </div>
-                <button class="btn-secondary" id="closeScannerBtn" style="height: 36px; padding: 0 16px;">Cancel</button>
-            </div>
-            
-            <div style="position: relative; width: 100%; max-width: 500px; margin: 0 auto; border-radius: var(--radius-md); overflow: hidden; background: #000; box-shadow: var(--glass-shadow);">
-                <video id="cameraStream" autoplay playsinline style="width: 100%; height: auto; display: block;"></video>
-                <!-- Scanner Frame Guide -->
-                <div style="position: absolute; top: 10%; left: 10%; right: 10%; bottom: 10%; border: 2px dashed rgba(255,255,255,0.5); pointer-events: none;"></div>
-            </div>
-
-            <canvas id="canvasCapture" style="display: none;"></canvas>
-
-            <div style="margin-top: 24px;">
-                <button class="btn-primary" id="captureBtn" style="margin: 0 auto; max-width: 250px;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
-                    Capture Document
-                </button>
             </div>
         </section>
 
@@ -278,6 +240,6 @@
     </footer>
 
     <div id="toastContainer" class="toast-container"></div>
-    <script src="app.js"></script>
+    <script src="app.js" defer></script>
 </body>
 </html>
