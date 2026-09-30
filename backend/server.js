@@ -51,6 +51,17 @@ app.post('/api/upload', upload.single('document'), (req, res) => {
     const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
     console.log(`File uploaded: ${fileUrl}`);
     
+    // Auto-delete the file after 2 minutes to ensure no documents are saved permanently
+    setTimeout(() => {
+        const filePath = path.join(uploadDir, req.file.filename);
+        if (fs.existsSync(filePath)) {
+            fs.unlink(filePath, (err) => {
+                if (err) console.error(`Failed to auto-delete file ${req.file.filename}:`, err);
+                else console.log(`Auto-deleted file: ${req.file.filename}`);
+            });
+        }
+    }, 2 * 60 * 1000); // 120000 ms
+
     res.json({ url: fileUrl, filename: req.file.originalname });
 });
 

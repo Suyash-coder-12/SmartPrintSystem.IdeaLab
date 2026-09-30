@@ -89,8 +89,17 @@ socket.on("print-job", async (data) => {
     if (options.monochrome !== undefined) printOptions.monochrome = options.monochrome;
     if (options.orientation) printOptions.orientation = options.orientation;
     if (options.paperSize) printOptions.paperSize = options.paperSize;
-    if (options.sides) printOptions.sides = options.sides;
-    if (options.pages) printOptions.pages = options.pages;
+    
+    // Automatically select a real physical printer to avoid hanging on "Print to PDF"
+    try {
+        const printers = await ptp.getPrinters();
+        const realPrinter = printers.find(p => p.name && !p.name.includes("PDF") && !p.name.includes("OneNote") && !p.name.includes("Fax"));
+        if (realPrinter) {
+            printOptions.printer = realPrinter.name;
+        }
+    } catch (e) {
+        console.error("Failed to fetch printers, using default.");
+    }
 
     // Print the file
     const ext = path.extname(tempFilePath).toLowerCase();
@@ -100,6 +109,14 @@ socket.on("print-job", async (data) => {
     } else {
         console.log(`Sending ${ext} to printer via PowerShell...`);
         const { exec } = require('child_process');
+        
+        let printerArg = "";
+        if (printOptions.printer) {
+            // Unreliable for Start-Process, but we do our best. 
+            // It uses default printer normally, so we will attempt to set default.
+            exec(`powershell -Command "(New-Object -ComObject WScript.Network).SetDefaultPrinter('${printOptions.printer}')"`);
+        }
+        
         exec(`powershell -WindowStyle Hidden -Command "Start-Process -FilePath '${tempFilePath}' -Verb Print"`);
         
         // Wait 5 seconds to allow the print spooler to read the file before we delete it in the finally block
@@ -110,14 +127,19 @@ socket.on("print-job", async (data) => {
   } catch (error) {
     console.error("Error processing print job:", error.message);
   } finally {
-    // Delete the temporary file
+    // Delete the temporary file after a 2-minute delay
+    // This allows the Windows print spooler enough time to process the file before it's removed.
     if (fs.existsSync(tempFilePath)) {
-      try {
-        fs.unlinkSync(tempFilePath);
-        console.log(`Deleted temporary file: ${tempFilePath}`);
-      } catch (cleanupError) {
-        console.error("Error deleting temporary file:", cleanupError.message);
-      }
+      setTimeout(() => {
+        try {
+          if (fs.existsSync(tempFilePath)) {
+            fs.unlinkSync(tempFilePath);
+            console.log(`Deleted temporary file: ${tempFilePath}`);
+          }
+        } catch (cleanupError) {
+          console.error("Error deleting temporary file:", cleanupError.message);
+        }
+      }, 120000); // 2 minutes delay
     }
   }
 });

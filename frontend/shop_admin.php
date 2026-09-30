@@ -1,0 +1,370 @@
+<?php
+session_start();
+// Shop Admin Dashboard (Xerox Center)
+if (!isset($_SESSION['logged_in']) || $_SESSION['user_type'] !== 'shopadmin') {
+    header('Location: login.php');
+    exit;
+}
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header('Location: login.php');
+    exit;
+}
+
+$shop_id = $_SESSION['shop_id'] ?? 'SHOP_DEFAULT';
+$shop_name = $_SESSION['shop_name'] ?? 'Smart Print Center';
+$qr_url = "http://user.localhost:8000/?shop=" . urlencode($shop_id);
+$qr_img_src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" . urlencode($qr_url) . "&bgcolor=ffffff&color=4f46e5";
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xerox Center Admin | Smart Print</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --shop-primary: #4f46e5;
+            --shop-primary-light: rgba(79, 70, 229, 0.1);
+            --shop-bg: #f8fafc;
+        }
+        
+        body { background-color: var(--shop-bg); overflow: hidden; }
+
+        .dashboard-layout {
+            display: flex; width: 100%; height: 100vh; gap: 20px; padding: 20px;
+        }
+
+        /* Modern Glass Sidebar */
+        .sidebar {
+            width: 280px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 30px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 20px 40px rgba(79, 70, 229, 0.05);
+            animation: slideRightFade 0.6s ease;
+        }
+
+        .sidebar-header {
+            display: flex; align-items: center; gap: 12px; color: var(--shop-primary); margin-bottom: 40px;
+        }
+
+        .sidebar-header h2 { font-weight: 800; font-size: 24px; }
+        .sidebar-header svg { filter: drop-shadow(0 4px 6px rgba(79, 70, 229, 0.3)); }
+
+        .nav-item {
+            display: flex; align-items: center; gap: 15px; padding: 15px 20px;
+            color: #64748b; text-decoration: none; font-weight: 600;
+            border-radius: 20px; transition: all 0.3s ease; margin-bottom: 10px;
+        }
+
+        .nav-item:hover { color: var(--shop-primary); background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transform: translateX(5px); }
+        .nav-item.active { background: var(--shop-primary); color: white; box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3); }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1; display: flex; flex-direction: column; overflow-y: auto;
+            border-radius: 30px; animation: slideUpFade 0.6s ease;
+        }
+        
+        .main-content::-webkit-scrollbar { width: 0; }
+
+        .top-header {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.7); backdrop-filter: blur(20px);
+            padding: 20px 30px; border-radius: 30px; margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.03);
+            position: sticky; top: 0; z-index: 10;
+        }
+
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white; border-radius: 30px; padding: 25px;
+            display: flex; align-items: center; gap: 20px;
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.04);
+            border: 1px solid rgba(79, 70, 229, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(79, 70, 229, 0.08); }
+
+        .stat-icon {
+            width: 65px; height: 65px; border-radius: 20px;
+            background: var(--shop-primary-light); color: var(--shop-primary);
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .stat-info h3 { font-size: 14px; color: #64748b; margin-bottom: 5px; font-weight: 600; }
+        .stat-info p { font-size: 32px; font-weight: 800; color: #0f172a; }
+
+        .dashboard-widgets { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+
+        .widget-panel {
+            background: white; border-radius: 30px; padding: 30px;
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.04);
+            border: 1px solid rgba(79, 70, 229, 0.05);
+        }
+
+        .widget-panel h3 { font-size: 18px; font-weight: 800; margin-bottom: 20px; color: #0f172a; }
+
+        /* Beautiful Tables */
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        th { color: #94a3b8; font-size: 12px; text-transform: uppercase; font-weight: 700; padding: 0 15px 10px; text-align: left; }
+        td { background: #f8fafc; padding: 15px; font-weight: 500; color: #334155; }
+        td:first-child { border-radius: 15px 0 0 15px; font-weight: 700; color: #0f172a; }
+        td:last-child { border-radius: 0 15px 15px 0; }
+        tr { transition: transform 0.2s; }
+        tr:hover td { background: #f1f5f9; }
+
+        .status { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+        .status.success { background: #d1fae5; color: #059669; }
+        .status.pending { background: #fef3c7; color: #d97706; }
+        
+        .btn-modern {
+            background: var(--shop-primary); color: white; border: none;
+            padding: 12px 24px; border-radius: 15px; font-weight: 700; cursor: pointer;
+            transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-modern:hover { background: #4338ca; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3); }
+
+        /* Modal styling */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .qr-modal {
+            background: white; border-radius: 30px; padding: 40px; text-align: center;
+            transform: translateY(20px); transition: transform 0.3s ease;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+        }
+        .modal-overlay.active .qr-modal { transform: translateY(0); }
+
+        @media (max-width: 900px) {
+            .dashboard-layout { flex-direction: column; overflow-y: auto; height: auto; }
+            body { overflow-y: auto; }
+            .sidebar { width: 100%; flex-direction: row; padding: 15px; overflow-x: auto; gap: 10px; margin-bottom: 20px; border-radius: 20px; }
+            .sidebar-header h2 { display: none; }
+            .sidebar-header { margin: 0; }
+            .nav-item { margin: 0; white-space: nowrap; padding: 10px 15px; }
+            .sidebar-footer { display: none; }
+            .dashboard-widgets { grid-template-columns: 1fr; }
+        }
+        
+        @keyframes slideRightFade { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div>
+                <div class="sidebar-header">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/>
+                    </svg>
+                    <h2><?php echo htmlspecialchars($shop_name); ?></h2>
+                </div>
+                
+                <nav class="sidebar-nav">
+                    <a href="#dashboard" class="nav-item active">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        Dashboard
+                    </a>
+                    <a href="#history" class="nav-item">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        Print History
+                    </a>
+                    <a href="#settings" class="nav-item">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        Store Settings
+                    </a>
+                </nav>
+            </div>
+            
+            <div class="sidebar-footer">
+                <a href="?logout=1" class="nav-item" style="color: #ef4444; background:#fef2f2;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Logout Workspace
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div>
+                    <h2 style="font-weight: 800; color: #0f172a; font-size:24px;">Store Overview</h2>
+                    <p style="color: #64748b; font-size:14px;">Welcome back. Your store is online (ID: <strong style="color:var(--shop-primary)"><?php echo htmlspecialchars($shop_id); ?></strong>).</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button class="btn-modern" onclick="document.getElementById('qrModal').classList.add('active')" style="padding: 10px 20px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Show Shop QR
+                    </button>
+                    <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($shop_name); ?>&background=4f46e5&color=fff&rounded=true" style="width: 45px; border-radius: 50%; box-shadow: 0 4px 10px rgba(79,70,229,0.3);" alt="User">
+                </div>
+            </header>
+
+            <!-- Dashboard View -->
+            <div id="view-dashboard" class="view-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+                        <div class="stat-info">
+                            <h3>Documents Printed</h3>
+                            <p>1,248</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+                        <div class="stat-info">
+                            <h3>Total Earnings</h3>
+                            <p>₹12,450</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:#fef3c7; color:#d97706;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+                        <div class="stat-info">
+                            <h3>Active Queues</h3>
+                            <p>3</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-widgets" style="grid-template-columns: 1fr;">
+                    <!-- Widget: Queue Count -->
+                    <div class="widget-panel" style="text-align: center; padding: 40px;">
+                        <h3 style="margin-bottom: 10px; color: #64748b; font-size: 16px;">Active Customers in Queue</h3>
+                        <div style="font-size: 72px; font-weight: 800; color: var(--shop-primary); line-height: 1;">2</div>
+                        <p style="color: #94a3b8; font-size: 14px; margin-top: 10px;">Waiting to process payments and print</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History View -->
+            <div id="view-history" class="view-section" style="display: none;">
+                <div class="widget-panel">
+                    <h3 style="margin-bottom: 20px;">Full Print History</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Job ID</th>
+                                <th>Customer</th>
+                                <th>Pages</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#JOB-9821</td>
+                                <td>Rahul K.</td>
+                                <td>12 Pages</td>
+                                <td>B&W</td>
+                                <td>₹24</td>
+                                <td><span class="status success">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>#JOB-9820</td>
+                                <td>Sneha V.</td>
+                                <td>2 Pages</td>
+                                <td>Color</td>
+                                <td>₹20</td>
+                                <td><span class="status success">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>#JOB-9819</td>
+                                <td>Vikram B.</td>
+                                <td>45 Pages</td>
+                                <td>B&W (Double)</td>
+                                <td>₹90</td>
+                                <td><span class="status success">Completed</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Settings View -->
+            <div id="view-settings" class="view-section" style="display: none;">
+                <div class="widget-panel">
+                    <h3 style="margin-bottom: 20px;">Store Settings</h3>
+                    <div style="display: flex; flex-direction: column; gap: 20px; max-width: 500px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Store Name</label>
+                            <input type="text" value="<?php echo htmlspecialchars($shop_name); ?>" style="width: 100%; padding: 12px 15px; border-radius: 12px; border: 1px solid #cbd5e1; outline: none; font-family: inherit;">
+                        </div>
+                        <div style="display: flex; gap: 15px;">
+                            <div style="flex: 1;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">B&W Price (₹)</label>
+                                <input type="number" value="2" style="width: 100%; padding: 12px 15px; border-radius: 12px; border: 1px solid #cbd5e1; outline: none; font-family: inherit;">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Color Price (₹)</label>
+                                <input type="number" value="10" style="width: 100%; padding: 12px 15px; border-radius: 12px; border: 1px solid #cbd5e1; outline: none; font-family: inherit;">
+                            </div>
+                        </div>
+                        <button class="btn-modern" style="margin-top: 10px;">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Dynamic QR Modal -->
+    <div class="modal-overlay" id="qrModal" onclick="if(event.target === this) this.classList.remove('active')">
+        <div class="qr-modal">
+            <h2 style="color:var(--shop-primary); margin-bottom:10px;"><?php echo htmlspecialchars($shop_name); ?></h2>
+            <p style="color:#64748b; margin-bottom:20px;">Scan this QR code to print directly at this store.</p>
+            <div style="padding:20px; border:2px dashed #cbd5e1; border-radius:20px; display:inline-block; margin-bottom:20px;">
+                <img src="<?php echo $qr_img_src; ?>" alt="Store QR Code" style="width:250px; height:250px; border-radius:10px;">
+            </div>
+            <p style="font-weight:800; font-size:20px; margin-bottom:20px; color:#0f172a;">ID: <?php echo htmlspecialchars($shop_id); ?></p>
+            <div style="display:flex; gap:10px; justify-content:center;">
+                <button class="btn-modern" style="background:#f1f5f9; color:#475569;" onclick="document.getElementById('qrModal').classList.remove('active')">Close</button>
+                <a href="<?php echo $qr_img_src; ?>" download="store-qr.png" class="btn-modern" style="text-decoration:none;">Download PNG</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple Nav Active Toggle & Tab Switching
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                // Ignore logout
+                if(item.getAttribute('href') === '?logout=1') return;
+                
+                // Active Class Toggle
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                
+                // Tab Switching Logic
+                const targetId = item.getAttribute('href').substring(1); // e.g., 'dashboard'
+                document.querySelectorAll('.view-section').forEach(section => {
+                    section.style.display = 'none';
+                });
+                
+                const targetSection = document.getElementById('view-' + targetId);
+                if (targetSection) {
+                    targetSection.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
