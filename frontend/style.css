@@ -49,8 +49,7 @@ body {
     color: var(--text-main);
     min-height: 100vh;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
     overflow-x: hidden;
     overflow-y: auto;
     position: relative;
@@ -90,6 +89,7 @@ body {
     z-index: 1;
     width: 100%;
     max-width: 1200px;
+    margin: 0 auto;
     padding: 20px;
     display: flex;
     flex-direction: column;
