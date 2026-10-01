@@ -160,6 +160,8 @@ async function handleFileSelection(file) {
     // Compress image to speed up upload drastically
     if (file.type.startsWith('image/')) {
         showToast('Optimizing image...', 'info');
+        // Yield to the browser so the toast renders immediately
+        await new Promise(resolve => setTimeout(resolve, 50));
         file = await compressImage(file);
     }
     
@@ -188,8 +190,10 @@ async function handleFileSelection(file) {
     
     showToast('File loaded successfully.', 'success');
     
-    // Parse PDF to get page count
-    await extractPdfInfo(file);
+    // Parse PDF to get page count, but yield first to allow UI to render the transition
+    setTimeout(async () => {
+        await extractPdfInfo(file);
+    }, 100);
 }
 
 async function extractPdfInfo(file) {

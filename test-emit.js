@@ -1,5 +1,5 @@
 const { io } = require("socket.io-client");
-const socket = io("https://smartprintsystemapp.onrender.com");
+const socket = io("https://qr-print-api.onrender.com");
 
 socket.on("connect", () => {
     console.log("Connected to Render server. Emitting print job...");
