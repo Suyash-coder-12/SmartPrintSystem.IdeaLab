@@ -95,16 +95,18 @@ export const AgentConsoleView: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
+    <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-6">
       {/* Console Header */}
-      <div className="glass-panel-elevated p-6 bg-gradient-to-r from-white via-emerald-50/20 to-teal-50/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center justify-center pr-1">
-            <Cpu className="w-9 h-9 text-slate-900" strokeWidth={1.8} />
-          </div>
+      <div className="glass-panel-elevated p-4 sm:p-6 bg-gradient-to-r from-white via-emerald-50/20 to-teal-50/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <img
+            src="/AppIcon.png"
+            alt="SmartPrint Logo"
+            className="w-10 h-10 sm:w-11 sm:h-11 object-contain rounded-xl shadow-xs border border-slate-200/50 shrink-0"
+          />
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-slate-900 tracking-tight">
+              <h1 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
                 Local Print Agent Service Console
               </h1>
               <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">

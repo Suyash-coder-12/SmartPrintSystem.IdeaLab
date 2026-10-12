@@ -31,7 +31,7 @@ function MainContent() {
       />
 
       {/* Main Interactive Work Area */}
-      <main className="flex-1 pb-16">
+      <main className="flex-1 pb-24 md:pb-16">
         {currentView === 'customer' && (
           <CustomerFlow initialCenterCode={customerCenterCode} />
         )}
@@ -49,25 +49,30 @@ function MainContent() {
       </main>
 
       {/* Footer System Info */}
-      <footer className="border-t border-slate-200/80 bg-white/70 backdrop-blur-md py-6 px-4 text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
+      <footer className="border-t border-slate-200/80 bg-white/70 backdrop-blur-md py-6 px-4 text-xs text-slate-500 mb-14 md:mb-0">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+            <img
+              src="/AppIcon.png"
+              alt="SmartPrint Logo"
+              className="w-5 h-5 object-contain rounded-md border border-slate-200/60 inline-block mr-1"
+            />
             <span className="font-bold text-slate-800">SmartPrint Architecture</span>
-            <span>&bull;</span>
-            <span>PHP 8.5 REST API</span>
-            <span>&bull;</span>
-            <span>TypeScript Frontend & Local Agent</span>
-            <span>&bull;</span>
+            <span className="hidden sm:inline">&bull;</span>
+            <span className="hidden sm:inline">PHP 8.5 REST API</span>
+            <span className="hidden sm:inline">&bull;</span>
+            <span className="hidden sm:inline">TypeScript Frontend & Local Agent</span>
+            <span className="hidden sm:inline">&bull;</span>
             <span>Liquid Crystal White Theme</span>
           </div>
-          <div className="flex items-center gap-4 text-[11px]">
+          <div className="flex items-center gap-4 text-[11px] justify-center">
             <span className="flex items-center gap-1 text-slate-600">
               <ShieldCheck className="w-3.5 h-3.5 text-slate-700" strokeWidth={1.8} />
-              Role-Based Authentication
+              Role-Based Access
             </span>
             <span className="flex items-center gap-1 text-slate-600">
               <Cpu className="w-3.5 h-3.5 text-slate-700" strokeWidth={1.8} />
-              Hardware Print Agent
+              Print Agent Bridge
             </span>
           </div>
         </div>

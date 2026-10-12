@@ -249,10 +249,18 @@ export const CustomerFlow: React.FC<CustomerFlowProps> = ({ initialCenterCode = 
   ];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-      {/* 8-Step Breadcrumbs Bar (Derived directly from PDF Page 2) */}
-      <div className="glass-panel p-3 bg-white/90">
-        <div className="grid grid-cols-4 md:grid-cols-8 gap-1.5 text-center text-xs">
+    <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-6">
+      {/* 8-Step Breadcrumbs Bar (Fluid Responsive for Mobile & Desktop) */}
+      <div className="glass-panel p-2.5 sm:p-3 bg-white/90">
+        <div className="flex md:hidden items-center justify-between text-xs px-1 pb-2 border-b border-slate-100 mb-2">
+          <span className="font-semibold text-slate-800">
+            Step {currentStep} of 8: <span className="text-blue-600">{stepsMeta[currentStep - 1]?.title}</span>
+          </span>
+          <span className="text-[10px] text-slate-400 font-mono">
+            {Math.round((currentStep / 8) * 100)}% Complete
+          </span>
+        </div>
+        <div className="flex overflow-x-auto scrollbar-none gap-1.5 md:grid md:grid-cols-8 text-center text-xs pb-0.5">
           {stepsMeta.map((s) => {
             const isCompleted = currentStep > s.num;
             const isCurrent = currentStep === s.num;
@@ -262,7 +270,7 @@ export const CustomerFlow: React.FC<CustomerFlowProps> = ({ initialCenterCode = 
                 key={s.num}
                 disabled={s.num > currentStep}
                 onClick={() => setCurrentStep(s.num)}
-                className={`py-2 px-1 rounded-xl transition-all flex flex-col items-center justify-center gap-1 ${
+                className={`py-2 px-2 md:px-1 rounded-xl transition-all shrink-0 md:shrink flex flex-col items-center justify-center gap-1 min-w-[72px] md:min-w-0 ${
                   isCurrent
                     ? 'bg-blue-600 text-white font-bold shadow-xs'
                     : isCompleted
@@ -290,13 +298,17 @@ export const CustomerFlow: React.FC<CustomerFlowProps> = ({ initialCenterCode = 
 
       {/* STEP 01: QR SCAN */}
       {currentStep === 1 && (
-        <div className="glass-panel-elevated p-8 bg-white/95 text-center max-w-lg mx-auto space-y-6">
+        <div className="glass-panel-elevated p-6 sm:p-8 bg-white/95 text-center max-w-lg mx-auto space-y-5 sm:space-y-6">
           <div className="flex justify-center">
-            <QrCode className="w-16 h-16 text-slate-800" strokeWidth={1.5} />
+            <img
+              src="/AppIcon.png"
+              alt="SmartPrint Logo"
+              className="w-20 h-20 sm:w-24 sm:h-24 object-contain rounded-2xl shadow-lg border border-slate-200/60 mx-auto"
+            />
           </div>
 
           <div>
-            <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">
               01 • Scan Xerox Center QR Code
             </h2>
             <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
@@ -361,9 +373,11 @@ export const CustomerFlow: React.FC<CustomerFlowProps> = ({ initialCenterCode = 
         <div className="glass-panel-elevated p-8 bg-white/95 max-w-xl mx-auto space-y-6">
           <div className="flex items-start justify-between border-b border-slate-100 pb-5">
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center pr-1">
-                <Building className="w-8 h-8 text-slate-900" strokeWidth={1.8} />
-              </div>
+              <img
+                src="/AppIcon.png"
+                alt="SmartPrint Logo"
+                className="w-10 h-10 object-contain rounded-xl shadow-xs border border-slate-200/50 shrink-0"
+              />
               <div>
                 <span className="text-[10px] uppercase font-bold tracking-wider text-blue-600 block">
                   02 • Center Dashboard Verified
@@ -788,7 +802,12 @@ export const CustomerFlow: React.FC<CustomerFlowProps> = ({ initialCenterCode = 
           </div>
 
           {/* Secure 4-Digit PIN Token */}
-          <div className="p-6 rounded-3xl bg-gradient-to-tr from-slate-900 to-slate-800 text-white shadow-xl max-w-xs mx-auto">
+          <div className="p-6 rounded-3xl bg-gradient-to-tr from-slate-900 to-slate-800 text-white shadow-xl max-w-xs mx-auto text-center">
+            <img
+              src="/AppIcon.png"
+              alt="SmartPrint Badge"
+              className="w-10 h-10 object-contain rounded-xl shadow-sm mx-auto mb-2.5 opacity-95"
+            />
             <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest block">
               Secure Pick-Up Job Token
             </span>
@@ -880,8 +899,15 @@ export const CustomerFlow: React.FC<CustomerFlowProps> = ({ initialCenterCode = 
 
           {/* Digital Receipt Card */}
           <div className="p-5 rounded-2xl border border-slate-200/80 bg-slate-50/70 text-xs space-y-2.5">
-            <div className="flex justify-between items-center border-b border-slate-200 pb-2">
-              <span className="font-bold text-slate-900">Digital Tax Invoice</span>
+            <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
+              <div className="flex items-center gap-2">
+                <img
+                  src="/AppIcon.png"
+                  alt="SmartPrint Logo"
+                  className="w-7 h-7 object-contain rounded-lg shadow-2xs border border-slate-200/50"
+                />
+                <span className="font-bold text-slate-900">Digital Tax Invoice</span>
+              </div>
               <span className="font-mono text-slate-500">{jobReceipt?.receipt_no || 'INV-94102'}</span>
             </div>
             <div className="flex justify-between text-slate-600">

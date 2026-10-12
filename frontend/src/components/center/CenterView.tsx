@@ -207,16 +207,18 @@ export const CenterView: React.FC<CenterViewProps> = ({
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-4 sm:space-y-6">
       {/* Center Top Header with Unique QR Pill */}
-      <div className="glass-panel-elevated p-6 bg-gradient-to-r from-white via-blue-50/20 to-indigo-50/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center justify-center pr-1">
-            <Building className="w-9 h-9 text-slate-900" strokeWidth={1.8} />
-          </div>
+      <div className="glass-panel-elevated p-4 sm:p-6 bg-gradient-to-r from-white via-blue-50/20 to-indigo-50/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <img
+            src="/AppIcon.png"
+            alt="SmartPrint Logo"
+            className="w-10 h-10 sm:w-11 sm:h-11 object-contain rounded-xl shadow-xs border border-slate-200/50 shrink-0"
+          />
           <div>
-            <div className="flex items-center gap-2.5">
-              <h1 className="text-xl font-bold text-slate-900 tracking-tight">
+            <div className="flex items-center gap-2">
+              <h1 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
                 {centerData?.name || 'QuickPrint Xerox & Digital Hub'}
               </h1>
               <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-100/80 border border-blue-200 text-blue-800 text-xs font-mono font-bold">
@@ -277,8 +279,8 @@ export const CenterView: React.FC<CenterViewProps> = ({
       {/* TAB 1: DASHBOARD */}
       {activeTab === 'dashboard' && (
         <div className="space-y-6">
-          {/* Key Metrics */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Key Metrics (Fluid Responsive) */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <div className="glass-panel p-5 bg-white/85">
               <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
                 Today's Earnings
@@ -453,8 +455,12 @@ export const CenterView: React.FC<CenterViewProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
             {/* Left: Interactive Printable Standee Preview */}
             <div className="relative mx-auto w-full max-w-sm p-6 rounded-3xl glass-panel-elevated bg-gradient-to-b from-white to-slate-50 border border-slate-200 text-center shadow-xl">
-              <div className="flex justify-center mb-1">
-                <Printer className="w-8 h-8 text-slate-900" strokeWidth={1.8} />
+              <div className="flex justify-center mb-2">
+                <img
+                  src="/AppIcon.png"
+                  alt="SmartPrint Logo"
+                  className="w-12 h-12 object-contain rounded-xl shadow-xs border border-slate-200/50"
+                />
               </div>
               <h4 className="text-lg font-black text-slate-900 uppercase tracking-tight">
                 {centerData?.name || 'QuickPrint Hub'}

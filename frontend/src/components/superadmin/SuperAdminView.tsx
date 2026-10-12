@@ -179,16 +179,18 @@ export const SuperAdminView: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-4 sm:space-y-6">
       {/* Super Admin Executive Header */}
-      <div className="glass-panel-elevated p-6 bg-gradient-to-r from-white via-slate-50/80 to-purple-50/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center justify-center pr-1">
-            <Shield className="w-9 h-9 text-slate-900" strokeWidth={1.8} />
-          </div>
+      <div className="glass-panel-elevated p-4 sm:p-6 bg-gradient-to-r from-white via-slate-50/80 to-purple-50/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <img
+            src="/AppIcon.png"
+            alt="SmartPrint Logo"
+            className="w-10 h-10 sm:w-11 sm:h-11 object-contain rounded-xl shadow-xs border border-slate-200/50 shrink-0"
+          />
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-slate-900 tracking-tight">Super Admin Command Center</h1>
+              <h1 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">Super Admin Command Center</h1>
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-purple-100 text-purple-700 border border-purple-200">
                 Root Access
               </span>
@@ -200,7 +202,7 @@ export const SuperAdminView: React.FC = () => {
         </div>
 
         {/* Tab Strip */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100/90 border border-slate-200/80 text-xs font-medium w-full md:w-auto overflow-x-auto">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100/90 border border-slate-200/80 text-xs font-medium w-full md:w-auto overflow-x-auto scrollbar-none pb-1">
           {[
             { id: 'dashboard', label: 'Dashboard', icon: TrendingUp },
             { id: 'users', label: 'Users Details', icon: Users },
@@ -216,7 +218,7 @@ export const SuperAdminView: React.FC = () => {
                   setActiveTab(tab.id as any);
                   setFeedbackMsg(null);
                 }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all shrink-0 ${
                   activeTab === tab.id
                     ? 'bg-white text-purple-700 font-semibold shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
@@ -242,8 +244,8 @@ export const SuperAdminView: React.FC = () => {
       {/* TAB 1: DASHBOARD */}
       {activeTab === 'dashboard' && (
         <div className="space-y-6">
-          {/* KPI Stat Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* KPI Stat Cards (Fluid Responsive Grid) */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <div className="glass-panel p-5 bg-white/85">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">

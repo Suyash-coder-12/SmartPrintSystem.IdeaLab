@@ -67,21 +67,25 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, default
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-md glass-panel-elevated p-6 md:p-8 bg-white/95 text-slate-800 shadow-2xl">
+      <div className="relative w-full max-w-md glass-panel-elevated p-5 sm:p-8 bg-white/95 text-slate-800 shadow-2xl max-h-[92vh] overflow-y-auto">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+          className="absolute top-4 right-4 sm:top-5 sm:right-5 p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Modal Header */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-5 sm:mb-6">
           <div className="flex justify-center mb-3">
-            <Shield className="w-10 h-10 text-slate-800" strokeWidth={1.8} />
+            <img
+              src="/AppIcon.png"
+              alt="SmartPrint Logo"
+              className="w-16 h-16 object-contain rounded-2xl shadow-md border border-slate-200/60 mx-auto"
+            />
           </div>
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
             {isRegister ? 'Register Xerox Center' : 'Sign in to SmartPrint'}
           </h2>
           <p className="text-xs text-slate-500 mt-1">
@@ -91,11 +95,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, default
 
         {/* Quick Demo Login Cards */}
         {!isRegister && (
-          <div className="mb-6 space-y-2.5">
+          <div className="mb-5 sm:mb-6 space-y-2.5">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 text-center">
               1-Click Instant Demo Login
             </p>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => handleQuick('superadmin')}
