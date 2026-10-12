@@ -1,0 +1,14 @@
+{
+  "name": "smartprint-agent",
+  "version": "1.0.0",
+  "description": "Local Print Agent connecting Cloud SmartPrint backend to physical Windows/CUPS spoolers",
+  "main": "dist/agent.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node src/agent.ts",
+    "agent": "node dist/agent.js"
+  },
+  "keywords": ["print-agent", "spooler", "smartprint"],
+  "author": "SmartPrint Enterprise",
+  "license": "ISC"
+}
