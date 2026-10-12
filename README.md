@@ -185,3 +185,21 @@ npm run dev
 cd print-agent
 node dist/agent.js
 ```
+
+---
+
+## ⚡ Deploying to Vercel (Production)
+
+The repository is pre-configured with `vercel.json`, root `package.json`, and serverless API handlers in `api/`.
+
+### 1-Click Web Deployment:
+1. Go to [Vercel New Project](https://vercel.com/new).
+2. Import the GitHub repository: `Suyash-coder-12/SmartPrintSystem.IdeaLab`.
+3. Keep default settings (`Root Directory: ./`, build command is automatic via `vercel.json`).
+4. Click **Deploy**.
+
+### CLI Deployment:
+```bash
+npx vercel --prod
+```
+
